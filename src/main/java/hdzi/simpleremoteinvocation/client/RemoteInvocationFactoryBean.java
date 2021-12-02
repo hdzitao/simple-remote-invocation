@@ -9,6 +9,9 @@ import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.util.Assert;
 import org.springframework.web.client.RestTemplate;
 
@@ -122,7 +125,9 @@ public class RemoteInvocationFactoryBean<T> implements FactoryBean<T> {
             // 调用
             String params = JSON.toJSONString(callVO);
             log.info("远程调用 {} {}", url, params);
-            RIClientResult result = restTemplate.postForObject(url, params, RIClientResult.class);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            RIClientResult result = restTemplate.postForObject(url, new HttpEntity<>(params, headers), RIClientResult.class);
             log.info("远程调用返回 {} {} {}", url, params, JSON.toJSONString(result));
             // 转化返回结果返回
             if (result != null && result.isSuccess()) {
