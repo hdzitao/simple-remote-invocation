@@ -1,9 +1,9 @@
 package hdzi.simpleremoteinvocation.server.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
-import com.yxz.qtcms.remotecall.bean.RemoteCallResult;
-import com.yxz.qtcms.remotecall.bean.RemoteCallVO;
-import com.yxz.qtcms.remotecall.service.RemoteCallService;
+import hdzi.simpleremoteinvocation.server.bean.RIServerResult;
+import hdzi.simpleremoteinvocation.server.bean.RIServerVO;
+import hdzi.simpleremoteinvocation.server.service.RemoteInvocationService;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeansException;
@@ -17,12 +17,12 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
 @Service
-public class RemoteCallServiceImpl implements RemoteCallService, ApplicationContextAware {
+public class RemoteInvocationServiceImpl implements RemoteInvocationService, ApplicationContextAware {
     private ApplicationContext context;
 
     @Override
     @SneakyThrows
-    public RemoteCallResult call(RemoteCallVO vo) {
+    public RIServerResult call(RIServerVO vo) {
         // 找到相应的调用方法
         Method method = ReflectionUtils.findMethod(vo.getClazz(), vo.getMethod(), vo.getArgTypes());
         Assert.notNull(method, "找不到远程调用的方法");
@@ -41,7 +41,7 @@ public class RemoteCallServiceImpl implements RemoteCallService, ApplicationCont
         Object invoke = method.invoke(bean, realArgs);
 
         // 返回
-        return RemoteCallResult.builder()
+        return RIServerResult.builder()
                 .success(true)
                 .result(invoke)
                 .method(method.toString())

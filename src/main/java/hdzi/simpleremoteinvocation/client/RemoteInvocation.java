@@ -6,12 +6,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 远程调用的server注解
+ * 远程配置
  */
-@Target(ElementType.TYPE)
+@Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface RemoteCallService {
-    String clazz() default ""; // class名
+public @interface RemoteInvocation {
+    String clazz() default "";
 
-    String qualifier() default ""; // bean的名字
+    String qualifier() default "";
+
+    String method() default "";
 }

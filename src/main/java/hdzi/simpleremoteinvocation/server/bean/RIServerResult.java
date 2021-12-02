@@ -5,8 +5,8 @@ import lombok.Data;
 
 @Data
 @Builder
-public class RemoteCallResult {
-    public static final RemoteCallResult FAIL = builder().success(false).build();
+public class RIServerResult {
+    public static final RIServerResult FAIL = builder().success(false).build();
 
     // 调用是否成功
     private boolean success;

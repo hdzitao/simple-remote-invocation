@@ -21,15 +21,15 @@ import java.util.List;
  * <p>
  * 使用: 在主类上  @Import(RemoteCallImportBeanDefinitionRegistrar.class)
  */
-public class RemoteCallImportBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar, BeanFactoryAware, ResourceLoaderAware {
+public class RemoteInvocationBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar, BeanFactoryAware, ResourceLoaderAware {
     private BeanFactory beanFactory; // BeanFactory可以获取扫描包
     private ResourceLoader resourceLoader; // ResourceLoader资源加载器
 
     @Override
     public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
-        ClassPathBeanDefinitionScanner scanner = new RemoteCallClassPathBeanDefinitionScanner(registry);
+        ClassPathBeanDefinitionScanner scanner = new RemoteInvocationClassPathBeanDefinitionScanner(registry);
 
-        scanner.addIncludeFilter(new AnnotationTypeFilter(RemoteCallService.class)); // 过滤出 @RemoteCallService
+        scanner.addIncludeFilter(new AnnotationTypeFilter(RemoteInvocationClient.class)); // 过滤出 @RemoteCallService
         scanner.setResourceLoader(this.resourceLoader); // 资源加载器
         List<String> basePackages = AutoConfigurationPackages.get(this.beanFactory); // 扫描包
         scanner.scan(StringUtils.toStringArray(basePackages)/* list -> array */); // 启动扫描

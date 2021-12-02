@@ -3,15 +3,16 @@ package hdzi.simpleremoteinvocation.client;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.util.TypeUtils;
-import com.xyz.dncms.elasticsearchcomponent.utils.HttpClientUtils;
-import com.xyz.dncms.remotecall.bean.RemoteCallResult;
-import com.xyz.dncms.remotecall.bean.RemoteCallVO;
+import hdzi.simpleremoteinvocation.client.bean.RIClientResult;
+import hdzi.simpleremoteinvocation.client.bean.RIClientVO;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.Assert;
+import org.springframework.web.client.RestTemplate;
 
+import javax.annotation.Resource;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -24,13 +25,16 @@ import java.util.Arrays;
  * @param <T>
  */
 @Log4j2
-public class RemoteCallFactoryBean<T> implements FactoryBean<T> {
-    @Value("${remote-call-api}")
+public class RemoteInvocationFactoryBean<T> implements FactoryBean<T> {
+    @Value("${remote-invocation-server}")
     private String url;
+
+    @Resource
+    private RestTemplate restTemplate;
 
     private final Class<T> _interface;
 
-    public RemoteCallFactoryBean(Class<T> _interface) {
+    public RemoteInvocationFactoryBean(Class<T> _interface) {
         this._interface = _interface;
     }
 
@@ -51,14 +55,14 @@ public class RemoteCallFactoryBean<T> implements FactoryBean<T> {
         private final String defaultCallQualifier;
 
         {
-            RemoteCallService remoteCallService = _interface.getAnnotation(RemoteCallService.class);
+            RemoteInvocationClient remoteCallService = _interface.getAnnotation(RemoteInvocationClient.class);
             defaultCallClass = remoteCallService.clazz();
             defaultCallQualifier = remoteCallService.qualifier();
         }
 
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            RemoteCall remoteCall = method.getAnnotation(RemoteCall.class);
+            RemoteInvocation remoteCall = method.getAnnotation(RemoteInvocation.class);
             String callClass/*类*/, qualifier/*bean的名字*/, callMethod/*方法*/;
             if (remoteCall == null) { // 没有RemoteCall注解,类和方法使用默认
                 callClass = defaultCallClass;
@@ -97,18 +101,18 @@ public class RemoteCallFactoryBean<T> implements FactoryBean<T> {
                         componentType = componentType.getComponentType();
                     }
                     builder.append("L");
-                    RemoteCallType remoteCallType = componentType.getAnnotation(RemoteCallType.class);
+                    RemoteType remoteCallType = componentType.getAnnotation(RemoteType.class);
                     builder.append(remoteCallType != null ? remoteCallType.value() : componentType.getName());
                     builder.append(";");
                     return builder.toString();
                 } else {
-                    RemoteCallType remoteCallType = type.getAnnotation(RemoteCallType.class);
+                    RemoteType remoteCallType = type.getAnnotation(RemoteType.class);
                     return remoteCallType != null ? remoteCallType.value() : type.getName();
                 }
             }).toArray(String[]::new);
 
             // 组装参数
-            RemoteCallVO callVO = RemoteCallVO.builder()
+            RIClientVO callVO = RIClientVO.builder()
                     .clazz(callClass)
                     .qualifier(qualifier)
                     .method(callMethod)
@@ -118,11 +122,10 @@ public class RemoteCallFactoryBean<T> implements FactoryBean<T> {
             // 调用
             String params = JSON.toJSONString(callVO);
             log.info("远程调用 {} {}", url, params);
-            String res = HttpClientUtils.postJSON(url, params);
-            log.info("远程调用返回 {} {} {}", url, params, res);
-            RemoteCallResult result = JSON.parseObject(res).toJavaObject(RemoteCallResult.class);
+            RIClientResult result = restTemplate.postForObject(url, params, RIClientResult.class);
+            log.info("远程调用返回 {} {} {}", url, params, JSON.toJSONString(result));
             // 转化返回结果返回
-            if (result.isSuccess()) {
+            if (result != null && result.isSuccess()) {
                 return TypeUtils.cast(result.getResult(), method.getReturnType(), null);
             } else {
                 throw new RuntimeException("远程调用失败");

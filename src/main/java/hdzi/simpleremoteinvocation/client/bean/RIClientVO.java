@@ -9,7 +9,7 @@ import lombok.Data;
  */
 @Data
 @Builder
-public class RemoteCallVO {
+public class RIClientVO {
     // 调用的类
     private String clazz;
     // bean名字

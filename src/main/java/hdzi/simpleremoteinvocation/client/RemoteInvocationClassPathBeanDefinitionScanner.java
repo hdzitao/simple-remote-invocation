@@ -11,8 +11,8 @@ import java.util.Set;
 /**
  * RemoteCallService扫描器
  */
-public class RemoteCallClassPathBeanDefinitionScanner extends ClassPathBeanDefinitionScanner {
-    public RemoteCallClassPathBeanDefinitionScanner(BeanDefinitionRegistry registry) {
+public class RemoteInvocationClassPathBeanDefinitionScanner extends ClassPathBeanDefinitionScanner {
+    public RemoteInvocationClassPathBeanDefinitionScanner(BeanDefinitionRegistry registry) {
         super(registry, false);
     }
 
@@ -39,6 +39,6 @@ public class RemoteCallClassPathBeanDefinitionScanner extends ClassPathBeanDefin
         // 新增一个构造函数调用,传入interface
         beanDefinition.getConstructorArgumentValues().addGenericArgumentValue(beanDefinition.getBeanClassName());
         // 换成FactoryBean
-        beanDefinition.setBeanClass(RemoteCallFactoryBean.class);
+        beanDefinition.setBeanClass(RemoteInvocationFactoryBean.class);
     }
 }

@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
  */
 @Data
 @NoArgsConstructor
-public class RemoteCallResult {
+public class RIClientResult {
     // 调用是否成功
     private boolean success;
 
