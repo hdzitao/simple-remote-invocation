@@ -22,7 +22,7 @@ public class RemoteInvocationServiceImpl implements RemoteInvocationService, App
 
     @Override
     @SneakyThrows
-    public RIServerResult call(RIServerVO vo) {
+    public RIServerResult invoke(RIServerVO vo) {
         // 找到相应的调用方法
         Method method = ReflectionUtils.findMethod(vo.getClazz(), vo.getMethod(), vo.getArgTypes());
         Assert.notNull(method, "找不到远程调用的方法");
@@ -38,12 +38,12 @@ public class RemoteInvocationServiceImpl implements RemoteInvocationService, App
         String qualifier = vo.getQualifier();
         Object bean = StringUtils.isEmpty(qualifier) ? context.getBean(vo.getClazz()) : context.getBean(qualifier);
         // 调用
-        Object invoke = method.invoke(bean, realArgs);
+        Object r = method.invoke(bean, realArgs);
 
         // 返回
         return RIServerResult.builder()
                 .success(true)
-                .result(invoke)
+                .result(r)
                 .method(method.toString())
                 .build();
     }

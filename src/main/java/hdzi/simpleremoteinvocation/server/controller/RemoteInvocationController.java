@@ -18,12 +18,12 @@ public class RemoteInvocationController {
     @Autowired
     private RemoteInvocationService service;
 
-    @PostMapping("call")
-    public RIServerResult call(@RequestBody RIServerVO vo) {
+    @PostMapping("invoke")
+    public RIServerResult invoke(@RequestBody RIServerVO vo) {
         log.info("接收远程调用 {}", JSON.toJSONString(vo));
         RIServerResult remoteCallResult;
         try {
-            remoteCallResult = service.call(vo);
+            remoteCallResult = service.invoke(vo);
         } catch (Exception e) {
             log.info("远程调用异常", e);
             remoteCallResult = RIServerResult.FAIL;
