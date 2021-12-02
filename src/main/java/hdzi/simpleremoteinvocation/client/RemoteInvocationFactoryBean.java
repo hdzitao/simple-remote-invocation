@@ -2,6 +2,7 @@ package hdzi.simpleremoteinvocation.client;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.parser.ParserConfig;
 import com.alibaba.fastjson.util.TypeUtils;
 import hdzi.simpleremoteinvocation.client.bean.RIClientResult;
 import hdzi.simpleremoteinvocation.client.bean.RIClientVO;
@@ -131,7 +132,7 @@ public class RemoteInvocationFactoryBean<T> implements FactoryBean<T> {
             log.info("远程调用返回 {} {} {}", url, params, JSON.toJSONString(result));
             // 转化返回结果返回
             if (result != null && result.isSuccess()) {
-                return TypeUtils.castToJavaBean(result.getResult(), method.getReturnType());
+                return TypeUtils.cast(result.getResult(), method.getGenericReturnType(), ParserConfig.getGlobalInstance());
             } else {
                 throw new RuntimeException("远程调用失败");
             }
