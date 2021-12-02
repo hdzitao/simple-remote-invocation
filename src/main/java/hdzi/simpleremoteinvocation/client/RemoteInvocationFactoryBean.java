@@ -11,7 +11,6 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.util.Assert;
 import org.springframework.web.client.RestTemplate;
 
@@ -34,6 +33,9 @@ public class RemoteInvocationFactoryBean<T> implements FactoryBean<T> {
 
     @Resource
     private RestTemplate restTemplate;
+
+    @Resource
+    private HttpHeaders headers;
 
     private final Class<T> _interface;
 
@@ -125,8 +127,7 @@ public class RemoteInvocationFactoryBean<T> implements FactoryBean<T> {
             // 调用
             String params = JSON.toJSONString(callVO);
             log.info("远程调用 {} {}", url, params);
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
+
             RIClientResult result = restTemplate.postForObject(url, new HttpEntity<>(params, headers), RIClientResult.class);
             log.info("远程调用返回 {} {} {}", url, params, JSON.toJSONString(result));
             // 转化返回结果返回
