@@ -127,12 +127,11 @@ public class RemoteInvocationFactoryBean<T> implements FactoryBean<T> {
             // 调用
             String params = JSON.toJSONString(callVO);
             log.info("远程调用 {} {}", url, params);
-
             RIClientResult result = restTemplate.postForObject(url, new HttpEntity<>(params, headers), RIClientResult.class);
             log.info("远程调用返回 {} {} {}", url, params, JSON.toJSONString(result));
             // 转化返回结果返回
             if (result != null && result.isSuccess()) {
-                return TypeUtils.cast(result.getResult(), method.getReturnType(), null);
+                return TypeUtils.castToJavaBean(result.getResult(), method.getReturnType());
             } else {
                 throw new RuntimeException("远程调用失败");
             }
