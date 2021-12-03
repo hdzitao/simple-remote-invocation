@@ -83,7 +83,7 @@ public class RemoteInvocationFactoryBean<T> implements FactoryBean<T> {
                 }
                 // 明确beanName
                 qualifier = remoteCall.qualifier();
-                if (StringUtils.isEmpty(callClass)) {
+                if (StringUtils.isEmpty(qualifier)) {
                     // 默认RemoteCallService配置的bean name,也可以单独配置
                     qualifier = defaultCallQualifier;
                 }
