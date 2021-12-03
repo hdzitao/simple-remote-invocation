@@ -1,16 +1,15 @@
 package hdzi.simpleremoteinvocation;
 
-import hdzi.simpleremoteinvocation.client.RemoteInvocationBeanDefinitionRegistrar;
+import hdzi.simpleremoteinvocation.client.EnableRemoteInvocation;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.client.RestTemplate;
 
 @SpringBootApplication
-@Import(RemoteInvocationBeanDefinitionRegistrar.class)
+@EnableRemoteInvocation
 public class SimpleRemoteInvocationApplication {
 
     @Bean
