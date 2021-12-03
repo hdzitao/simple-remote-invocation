@@ -1,6 +1,7 @@
 package hdzi.simpleremoteinvocation.test;
 
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
@@ -38,6 +39,9 @@ public class TestServiceImpl {
     }
 
     public List<TestServerVO> testObjectList(List<TestServerVO> vo) {
+        if (!CollectionUtils.isEmpty(vo)) {
+            TestServerVO serverVO = vo.get(0); // 测试泛型是否正确转化
+        }
         return vo;
     }
 
